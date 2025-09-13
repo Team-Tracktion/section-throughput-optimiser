@@ -1,29 +1,70 @@
-# section-throughput-optimiser
-1. Build the "Brain" (The Optimization Algorithm)
-Input: Real-time data (train positions, speeds, delays, track availability).
+# Railway Scheduling Project Summary
 
-Process: Create an algorithm that processes this data against a set of hard constraints (safety rules, track physics, signaling) and soft constraints (train priorities, schedules).
+## Project Goal
 
-Output: A conflict-free movement plan. This is the core of your solution. It must answer: "Which train goes first at junction X?" and "Where should Train Y wait for Train Z to pass?"
+* Develop a **dynamic, human-in-the-loop railway scheduler**.
+* Maximize **section throughput**, minimize **delays**, handle **track diversions**.
+* Respect **train priorities** and **operational constraints**.
 
-2. Make it Dynamic and Real-Time
-Your system cannot be a one-time planner. It must constantly re-calculate the optimal plan as new data comes in (e.g., a train breaks down, there's a sudden delay).
+## Key Challenges
 
-It must re-optimize quickly (within seconds or minutes) to be useful to a controller.
+1. Conflicts on shared track sections.
+2. Headway and safety constraints.
+3. Trade-offs between diversions, delays, and throughput.
+4. Real-time adjustments based on **human input**.
+5. Scalability for multiple trains and sections.
 
-3. Create a Simple User Interface (UI) for Controllers
-Show the Recommendation: Clearly display which train should proceed, halt, or be rerouted.
+## Problem Formulation
 
-Show the "Why": Provide a simple reason for the recommendation (e.g., "Allow Freight Train 123AB to pass first due to higher priority").
+### Decision Variables
 
-Allow Manual Override: Controllers are in charge. There must be a button for them to ignore the AI's suggestion and log a reason why.
+* `T_i`: Start time of train i at a section.
+* `x_{i,r}`: Route choice (main or diversion).
+* `flow_i`: Indicator if train completes within planning horizon.
+* `p_{ij}`: Sequencing between conflicting trains.
 
-4. Develop a "What-If" Simulator
-This is a key feature. Allow the controller to ask: "What would happen if I held this train for 5 minutes?" or "What if I route this train through Platform 2 instead of 1?"
+### Objective Function
 
-Your system should simulate the outcome and show the potential effects on overall delay and throughput.
+```math
+max \sum_i w_i \cdot flow_i - \alpha \sum_i (T_i - T_i^{sched}) - \beta \sum_i \sum_r c_r \cdot x_{i,r}
+```
 
-5. Integrate with Data & Show Results
-Data In: Design how you would connect to real railway data feeds (APIs for signaling, timetables, GPS). (For the hackathon, you can use simulated or sample data).
+* Weighted throughput minus **delay penalties** and **diversion costs**.
+* `w_i` = train priority.
+* `α` = delay weight.
+* `β` = diversion penalty.
 
-Data Out: Create a dashboard showing KPIs like Punctuality, Average Delay, and Track Utilization to prove your system's effectiveness.
+### Constraints
+
+1. Each train takes exactly **one route**: `\sum_r x_{i,r} = 1`
+2. **Conflict-free** section scheduling using pairwise sequencing and headway constraints.
+3. **Time horizon** enforcement — trains must finish within planning horizon.
+4. **Priority enforcement** for high-priority trains.
+5. **Human input adjustments** — fixed routes or start times for operator-selected trains.
+
+## Implementation Status
+
+* **Python-based CP-SAT model** using Google OR-Tools.
+* Supports **3–10 trains** with main/diversion route options.
+* Includes:
+
+  * Weighted throughput optimization
+  * Conflict-free section scheduling
+  * Headway and safety constraints
+  * Human-in-the-loop adjustments (fixed routes/start times)
+* Flexible for extension to multiple sections and rolling horizon.
+
+## Git Workflow
+
+* One `main` branch: stable production-ready code.
+* One `dev-<username>` branch per contributor.
+* Pull requests from `dev-<username>` → `main` after review and testing.
+* Commit messages in imperative mood; small, atomic commits.
+
+## Next Steps
+
+1. Extend model to **multi-section networks**.
+2. Implement **rolling horizon scheduling** for real-time updates.
+3. Integrate **visualization (Gantt charts)** to display schedules and human adjustments.
+4. Optimize for **larger numbers of trains (20–50+)** using hybrid MILP + heuristics approach.
+5. Refine **human-in-the-loop interface** for dynamic rescheduling.
