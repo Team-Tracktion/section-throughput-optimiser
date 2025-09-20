@@ -61,6 +61,10 @@ max \sum_i w_i \cdot flow_i - \alpha \sum_i (T_i - T_i^{sched}) - \beta \sum_i \
 ```bash
 git clone https://github.com/Team-Tracktion/section-throughput-optimiser.git
 ```
+* Fetch changes
+```bash
+git fetch origin
+````
 * Checkout your branch.
 ```bash
 git checkout dev-<username>
