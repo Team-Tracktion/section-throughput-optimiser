@@ -56,8 +56,25 @@ max \sum_i w_i \cdot flow_i - \alpha \sum_i (T_i - T_i^{sched}) - \beta \sum_i \
 
 ## Git Workflow
 
-* One `main` branch: stable production-ready code.
+
+* Clone the repo.
+```bash
+git clone https://github.com/Team-Tracktion/section-throughput-optimiser.git
+```
+* Fetch changes
+```bash
+git fetch origin
+````
+* Checkout your branch.
+```bash
+git checkout dev-<username>
+```
 * One `dev-<username>` branch per contributor.
+* Merge with main
+```bash
+git merge main
+```
+* Develop on your branch only.
 * Pull requests from `dev-<username>` → `main` after review and testing.
 * Commit messages in imperative mood; small, atomic commits.
 
