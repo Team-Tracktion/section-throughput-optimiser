@@ -1,0 +1,14 @@
+# Railway Scheduler Configuration
+default_time_limit: 10    # minutes
+max_trains: 25            # maximum trains for CP-SAT
+horizon_multiplier: 8     # horizon = trains * multiplier
+
+# Solver parameters
+solver_params:
+  num_search_workers: 8
+  log_search_progress: true
+  
+# Default weights
+weights:
+  alpha: 1.0    # delay weight
+  beta: 2.0     # diversion penalty
