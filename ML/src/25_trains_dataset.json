@@ -1,0 +1,296 @@
+{
+  "trains": [
+    {
+      "id": "T01",
+      "priority": "medium",
+      "scheduled_time": 87,
+      "travel_times": [
+        30,
+        36,
+        41,
+        58
+      ]
+    },
+    {
+      "id": "T02",
+      "priority": "low",
+      "scheduled_time": 49,
+      "travel_times": [
+        20,
+        33,
+        35,
+        38
+      ]
+    },
+    {
+      "id": "T03",
+      "priority": "medium",
+      "scheduled_time": 10,
+      "travel_times": [
+        32,
+        40,
+        42,
+        47
+      ]
+    },
+    {
+      "id": "T04",
+      "priority": "medium",
+      "scheduled_time": 76,
+      "travel_times": [
+        52,
+        67,
+        65,
+        67
+      ]
+    },
+    {
+      "id": "T05",
+      "priority": "medium",
+      "scheduled_time": 108,
+      "travel_times": [
+        52,
+        67,
+        70,
+        85
+      ]
+    },
+    {
+      "id": "T06",
+      "priority": "medium",
+      "scheduled_time": 8,
+      "travel_times": [
+        36,
+        51,
+        60,
+        65
+      ]
+    },
+    {
+      "id": "T07",
+      "priority": "medium",
+      "scheduled_time": 117,
+      "travel_times": [
+        35,
+        40,
+        56,
+        61
+      ]
+    },
+    {
+      "id": "T08",
+      "priority": "medium",
+      "scheduled_time": 101,
+      "travel_times": [
+        38,
+        53,
+        60,
+        64
+      ]
+    },
+    {
+      "id": "T09",
+      "priority": "low",
+      "scheduled_time": 80,
+      "travel_times": [
+        23,
+        36,
+        37,
+        53
+      ]
+    },
+    {
+      "id": "T10",
+      "priority": "high",
+      "scheduled_time": 93,
+      "travel_times": [
+        57,
+        72,
+        67,
+        85
+      ]
+    },
+    {
+      "id": "T11",
+      "priority": "medium",
+      "scheduled_time": 23,
+      "travel_times": [
+        45,
+        55,
+        61,
+        75
+      ]
+    },
+    {
+      "id": "T12",
+      "priority": "high",
+      "scheduled_time": 22,
+      "travel_times": [
+        27,
+        41,
+        52,
+        46
+      ]
+    },
+    {
+      "id": "T13",
+      "priority": "low",
+      "scheduled_time": 72,
+      "travel_times": [
+        26,
+        31,
+        45,
+        61
+      ]
+    },
+    {
+      "id": "T14",
+      "priority": "medium",
+      "scheduled_time": 12,
+      "travel_times": [
+        29,
+        40,
+        47,
+        48
+      ]
+    },
+    {
+      "id": "T15",
+      "priority": "low",
+      "scheduled_time": 62,
+      "travel_times": [
+        42,
+        53,
+        65,
+        65
+      ]
+    },
+    {
+      "id": "T16",
+      "priority": "low",
+      "scheduled_time": 89,
+      "travel_times": [
+        59,
+        64,
+        81,
+        83
+      ]
+    },
+    {
+      "id": "T17",
+      "priority": "low",
+      "scheduled_time": 77,
+      "travel_times": [
+        51,
+        59,
+        65,
+        80
+      ]
+    },
+    {
+      "id": "T18",
+      "priority": "high",
+      "scheduled_time": 105,
+      "travel_times": [
+        36,
+        46,
+        52,
+        62
+      ]
+    },
+    {
+      "id": "T19",
+      "priority": "low",
+      "scheduled_time": 70,
+      "travel_times": [
+        57,
+        65,
+        80,
+        90
+      ]
+    },
+    {
+      "id": "T20",
+      "priority": "low",
+      "scheduled_time": 40,
+      "travel_times": [
+        26,
+        41,
+        51,
+        53
+      ]
+    },
+    {
+      "id": "T21",
+      "priority": "low",
+      "scheduled_time": 82,
+      "travel_times": [
+        56,
+        62,
+        71,
+        88
+      ]
+    },
+    {
+      "id": "T22",
+      "priority": "low",
+      "scheduled_time": 0,
+      "travel_times": [
+        55,
+        70,
+        77,
+        86
+      ]
+    },
+    {
+      "id": "T23",
+      "priority": "high",
+      "scheduled_time": 66,
+      "travel_times": [
+        35,
+        44,
+        57,
+        64
+      ]
+    },
+    {
+      "id": "T24",
+      "priority": "low",
+      "scheduled_time": 73,
+      "travel_times": [
+        46,
+        54,
+        62,
+        76
+      ]
+    },
+    {
+      "id": "T25",
+      "priority": "high",
+      "scheduled_time": 58,
+      "travel_times": [
+        44,
+        50,
+        64,
+        73
+      ]
+    }
+  ],
+  "routes": [
+    "main",
+    "diversion1",
+    "diversion2",
+    "diversion3"
+  ],
+  "diversion_costs": [
+    0,
+    15,
+    25,
+    35
+  ],
+  "headway": 5,
+  "horizon": 240,
+  "alpha": 1.0,
+  "beta": 2.0,
+  "human_adjustments": []
+}
