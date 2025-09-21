@@ -1,0 +1,30 @@
+{
+  "sections": [
+    {"id": "s1", "length": 5, "capacity": 1, "type": "main", "station": "A"},
+    {"id": "s2", "length": 8, "capacity": 1, "type": "main", "station": null},
+    {"id": "s3", "length": 6, "capacity": 1, "type": "main", "station": "B"},
+    {"id": "s4", "length": 7, "capacity": 1, "type": "main", "station": null},
+    {"id": "s5", "length": 4, "capacity": 1, "type": "main", "station": "C"},
+    {"id": "loop1", "length": 3, "capacity": 1, "type": "loop", "station": "B"},
+    {"id": "loop2", "length": 4, "capacity": 1, "type": "loop", "station": "C"}
+  ],
+  "junctions": [
+    {
+      "id": "j1",
+      "sections": ["s2", "s3", "loop1"],
+      "conflicting_routes": [["s2-s3", "s2-loop1"]]
+    },
+    {
+      "id": "j2", 
+      "sections": ["s4", "s5", "loop2"],
+      "conflicting_routes": [["s4-s5", "s4-loop2"]]
+    }
+  ],
+  "min_travel_times": {
+    "express": {"s1-s2": 3, "s2-s3": 4, "s3-s4": 3, "s4-s5": 2, "s2-loop1": 2, "loop1-s3": 2, "s4-loop2": 2, "loop2-s5": 2},
+    "passenger": {"s1-s2": 4, "s2-s3": 5, "s3-s4": 4, "s4-s5": 3, "s2-loop1": 3, "loop1-s3": 3, "s4-loop2": 3, "loop2-s5": 3},
+    "freight": {"s1-s2": 6, "s2-s3": 7, "s3-s4": 6, "s4-s5": 4, "s2-loop1": 4, "loop1-s3": 4, "s4-loop2": 4, "loop2-s5": 4}
+  },
+  "min_headway_time": 3,
+  "stations": ["A", "B", "C"]
+}

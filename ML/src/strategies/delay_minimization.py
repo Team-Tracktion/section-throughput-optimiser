@@ -1,30 +1,32 @@
 """
-Objective function definitions for train movement optimization.
+Delay minimization strategy for train movement optimization.
 """
 
 from ortools.sat.python import cp_model
+from .utils.constants import TRAIN_PRIORITIES
 
-class ObjectiveFunction:
-    """Defines and sets the objective function for optimization."""
+class DelayMinimizationStrategy:
+    """Optimization strategy focused on minimizing total weighted delay."""
     
-    def __init__(self, model, variables, timetable):
+    def __init__(self, model, variables, timetable, time_horizon):
         """
-        Initialize objective function.
+        Initialize delay minimization strategy.
         
         Args:
             model: CP-SAT model instance
             variables: TrainMovementVariables instance
             timetable: Dictionary containing train timetable data
+            time_horizon: Time horizon for optimization in minutes
         """
         self.model = model
         self.vars = variables
         self.timetable = timetable
+        self.time_horizon = time_horizon
         
     def set_objective(self):
         """Set the objective function to minimize total weighted delay."""
-        print("Setting objective function...")
+        print("Setting delay minimization objective...")
         
-        # We'll minimize total weighted delay (higher priority trains have higher weights)
         total_delay = 0
         
         for train_id in self.vars.train_ids:
@@ -36,21 +38,22 @@ class ObjectiveFunction:
             dest_section = train_data['route'][-1]
             
             # Create a variable for arrival time
-            arrival_time = self.model.NewIntVar(0, self.vars.time_horizon, f'arrival_time_{train_id}')
+            arrival_time = self.model.NewIntVar(0, self.time_horizon, f'arrival_time_{train_id}')
             
             # Link arrival_time to occupancy variables
-            for t in range(self.vars.time_horizon):
+            occupancy_vars = self.vars.occupancy[train_id][dest_section]
+            for t in range(self.time_horizon):
                 # If train occupies destination at time t, then arrival_time <= t
-                self.model.Add(arrival_time <= t).OnlyEnforceIf(self.vars.occupancy[train_id][dest_section][t])
+                self.model.Add(arrival_time <= t).OnlyEnforceIf(occupancy_vars[t])
                 # And arrival_time should be the first time it arrives
                 if t > 0:
                     # If it wasn't there at t-1 but is there at t, then arrival_time >= t
-                    was_occupied = self.vars.occupancy[train_id][dest_section][t-1]
-                    is_occupied = self.vars.occupancy[train_id][dest_section][t]
+                    was_occupied = occupancy_vars[t-1]
+                    is_occupied = occupancy_vars[t]
                     self.model.Add(arrival_time >= t).OnlyEnforceIf([is_occupied, was_occupied.Not()])
             
             # Calculate delay (max(0, arrival_time - scheduled_arrival))
-            delay = self.model.NewIntVar(0, self.vars.time_horizon, f'delay_{train_id}')
+            delay = self.model.NewIntVar(0, self.time_horizon, f'delay_{train_id}')
             self.model.Add(delay >= arrival_time - scheduled_arrival)
             self.model.Add(delay >= 0)
             
@@ -62,4 +65,4 @@ class ObjectiveFunction:
         
         # Set the objective to minimize total weighted delay
         self.model.Minimize(total_delay)
-        print("Objective function set to minimize total weighted delay.")
+        print("Delay minimization objective set.")

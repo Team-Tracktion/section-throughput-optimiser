@@ -1,0 +1,57 @@
+{
+  "infrastructure": {
+    "sections": [
+      {"id": "s1", "length": 5, "capacity": 1},
+      {"id": "s2", "length": 8, "capacity": 1},
+      {"id": "s3", "length": 6, "capacity": 1},
+      {"id": "s4", "length": 7, "capacity": 1},
+      {"id": "s5", "length": 4, "capacity": 1}
+    ],
+    "junctions": [
+      {
+        "id": "j1",
+        "conflicting_routes": [["s1-s2", "s3-s4"]]
+      }
+    ],
+    "min_travel_times": {
+      "express": {"s1-s2": 3, "s2-s3": 4, "s3-s4": 3, "s4-s5": 2},
+      "passenger": {"s1-s2": 4, "s2-s3": 5, "s3-s4": 4, "s4-s5": 3},
+      "freight": {"s1-s2": 6, "s2-s3": 7, "s3-s4": 6, "s4-s5": 4}
+    },
+    "min_headway_time": 3
+  },
+  "timetable": {
+    "trains": {
+      "train_1_express": {
+        "type": "express",
+        "priority": 3,
+        "route": ["s1", "s2", "s3", "s4", "s5"],
+        "scheduled_arrival": 25
+      },
+      "train_2_passenger": {
+        "type": "passenger",
+        "priority": 2,
+        "route": ["s1", "s2", "s3", "s4", "s5"],
+        "scheduled_arrival": 30
+      },
+      "train_3_freight": {
+        "type": "freight",
+        "priority": 1,
+        "route": ["s1", "s2", "s3", "s4", "s5"],
+        "scheduled_arrival": 45
+      },
+      "train_4_express": {
+        "type": "express",
+        "priority": 3,
+        "route": ["s1", "s2", "s3", "s4", "s5"],
+        "scheduled_arrival": 20
+      },
+      "train_5_passenger": {
+        "type": "passenger",
+        "priority": 2,
+        "route": ["s1", "s2", "s3", "s4", "s5"],
+        "scheduled_arrival": 35
+      }
+    }
+  }
+}

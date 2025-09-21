@@ -1,0 +1,44 @@
+{
+  "trains": {
+    "train_1_express": {
+      "type": "express",
+      "priority": 3,
+      "route": ["s1", "s2", "s3", "s4", "s5"],
+      "scheduled_arrival": 25,
+      "origin": "A",
+      "destination": "C"
+    },
+    "train_2_passenger": {
+      "type": "passenger", 
+      "priority": 2,
+      "route": ["s1", "s2", "s3", "s4", "s5"],
+      "scheduled_arrival": 30,
+      "origin": "A",
+      "destination": "C"
+    },
+    "train_3_freight": {
+      "type": "freight",
+      "priority": 1,
+      "route": ["s1", "s2", "s3", "s4", "s5"],
+      "scheduled_arrival": 45,
+      "origin": "A", 
+      "destination": "C"
+    },
+    "train_4_express": {
+      "type": "express",
+      "priority": 3,
+      "route": ["s1", "s2", "s3", "s4", "s5"],
+      "scheduled_arrival": 20,
+      "origin": "A",
+      "destination": "C"
+    },
+    "train_5_passenger": {
+      "type": "passenger",
+      "priority": 2, 
+      "route": ["s1", "s2", "loop1", "s3", "s4", "s5"],
+      "scheduled_arrival": 35,
+      "origin": "A",
+      "destination": "C"
+    }
+  }
+}
