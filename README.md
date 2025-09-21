@@ -1,87 +1,94 @@
-# Railway Scheduling Project Summary
+# Heuristic-Prioritized Limited Horizon Optimization (H-PLHO)
 
-## Project Goal
+## Overview
+**H-PLHO** is a hybrid algorithm for **real-time optimization** in complex scheduling domains such as **railway traffic management**.  
+It efficiently resolves conflicts by combining **fast heuristics** with **targeted mathematical optimization**, decomposing large problems into manageable sub-problems.
 
-* Develop a **dynamic, human-in-the-loop railway scheduler**.
-* Maximize **section throughput**, minimize **delays**, handle **track diversions**.
-* Respect **train priorities** and **operational constraints**.
+---
 
-## Key Challenges
+## Core Principles
 
-1. Conflicts on shared track sections.
-2. Headway and safety constraints.
-3. Trade-offs between diversions, delays, and throughput.
-4. Real-time adjustments based on **human input**.
-5. Scalability for multiple trains and sections.
+- **Decomposition**: Uses a rolling horizon (e.g., 30-minute windows) to break down the problem spatially and temporally.  
+- **Heuristic Triaging**: Applies priority rules to resolve most conflicts instantly (e.g., passenger over freight, more delayed trains first).  
+- **Targeted Optimization**: Solves small optimization models only for complex conflict clusters.  
 
-## Problem Formulation
+---
 
-### Decision Variables
+## Methodology
 
-* `T_i`: Start time of train i at a section.
-* `x_{i,r}`: Route choice (main or diversion).
-* `flow_i`: Indicator if train completes within planning horizon.
-* `p_{ij}`: Sequencing between conflicting trains.
+### Heuristic Module
+- Applies rules based on train priority, delay, and schedule.  
 
-### Objective Function
+### Optimization Module
+- Solves localized **MILP/CP** models to minimize weighted delay in clusters.  
 
-```math
-max \sum_i w_i \cdot flow_i - \alpha \sum_i (T_i - T_i^{sched}) - \beta \sum_i \sum_r c_r \cdot x_{i,r}
-```
+---
 
-* Weighted throughput minus **delay penalties** and **diversion costs**.
-* `w_i` = train priority.
-* `α` = delay weight.
-* `β` = diversion penalty.
+## Algorithm Steps
+
+1. **Conflict Detection**  
+   Project train movements and identify conflicts.  
+
+2. **Heuristic Filtering**  
+   Resolve clear conflicts using priority rules.  
+
+3. **Cluster Identification**  
+   Group unresolved conflicts into clusters.  
+
+4. **Mini-Optimization**  
+   Solve a small optimization model per cluster.  
+
+5. **Execution & Roll**  
+   Implement the plan and repeat for the next horizon.  
+
+---
+
+## Mathematical Formulation
+
+**Objective**: Minimize total weighted delay  
+
+\[
+\text{Minimize } Z = \sum_{t \in T} w_t \cdot D^{\text{total}}_t
+\]
+
+### Variables
+- **Precedence binaries**: \( x_{i,j} \)  
+- **Total delay**: \( D^{\text{total}}_t \)  
 
 ### Constraints
+- Precedence  
+- Headway  
+- Resource occupation  
+- Delay calculation  
 
-1. Each train takes exactly **one route**: `\sum_r x_{i,r} = 1`
-2. **Conflict-free** section scheduling using pairwise sequencing and headway constraints.
-3. **Time horizon** enforcement — trains must finish within planning horizon.
-4. **Priority enforcement** for high-priority trains.
-5. **Human input adjustments** — fixed routes or start times for operator-selected trains.
+---
 
-## Implementation Status
+## Applications
 
-* **Python-based CP-SAT model** using Google OR-Tools.
-* Supports **3–10 trains** with main/diversion route options.
-* Includes:
+- Real-time **railway dispatching and signaling**  
+- **Delay management** and recovery  
+- **Network resilience** during disruptions  
+- Also applicable to:
+  - **Air traffic control**  
+  - **Manufacturing scheduling**  
+  - **Logistics planning**  
 
-  * Weighted throughput optimization
-  * Conflict-free section scheduling
-  * Headway and safety constraints
-  * Human-in-the-loop adjustments (fixed routes/start times)
-* Flexible for extension to multiple sections and rolling horizon.
+---
 
-## Git Workflow
+## Advantages
 
+- High computational efficiency  
+- Scalable to large networks  
+- Maintains solution quality  
+- Explainable decisions  
 
-* Clone the repo.
-```bash
-git clone https://github.com/Team-Tracktion/section-throughput-optimiser.git
-```
-* Fetch changes
-```bash
-git fetch origin
-````
-* Checkout your branch.
-```bash
-git checkout dev-<username>
-```
-* One `dev-<username>` branch per contributor.
-* Merge with main
-```bash
-git merge main
-```
-* Develop on your branch only.
-* Pull requests from `dev-<username>` → `main` after review and testing.
-* Commit messages in imperative mood; small, atomic commits.
+---
 
-## Next Steps
+## Limitations
 
-1. Extend model to **multi-section networks**.
-2. Implement **rolling horizon scheduling** for real-time updates.
-3. Integrate **visualization (Gantt charts)** to display schedules and human adjustments.
-4. Optimize for **larger numbers of trains (20–50+)** using hybrid MILP + heuristics approach.
-5. Refine **human-in-the-loop interface** for dynamic rescheduling.
+- May miss long-term optimal solutions  
+- Relies on heuristic quality  
+- Requires accurate cluster identification  
+- Higher implementation complexity  
+
+---
