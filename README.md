@@ -1,94 +1,212 @@
-# Heuristic-Prioritized Limited Horizon Optimization (H-PLHO)
+Railway Section Throughput Optimizer
+====================================
 
-## Overview
-**H-PLHO** is a hybrid algorithm for **real-time optimization** in complex scheduling domains such as **railway traffic management**.  
-It efficiently resolves conflicts by combining **fast heuristics** with **targeted mathematical optimization**, decomposing large problems into manageable sub-problems.
+Overview
+--------
 
----
+A simulation and optimization framework for railway operations that models train movements, detects conflicts, and applies scheduling optimizations to improve section throughput between Mumbai Central and Hoshangabad.
 
-## Core Principles
+Core Principles
+---------------
 
-- **Decomposition**: Uses a rolling horizon (e.g., 30-minute windows) to break down the problem spatially and temporally.  
-- **Heuristic Triaging**: Applies priority rules to resolve most conflicts instantly (e.g., passenger over freight, more delayed trains first).  
-- **Targeted Optimization**: Solves small optimization models only for complex conflict clusters.  
+### Decomposition
 
----
+*   Breaks the optimization problem into manageable temporal windows
+    
+*   Processes train movements in discrete time steps (2-second intervals)
+    
+*   Handles station sections and line segments independently
+    
 
-## Methodology
+### Heuristic Triaging
 
-### Heuristic Module
-- Applies rules based on train priority, delay, and schedule.  
+*   Applies priority rules to resolve conflicts instantly (Express > Passenger > Freight)
+    
+*   Uses train type hierarchy for resource allocation decisions
+    
+*   Implements first-come-first-served with priority override for platform assignment
+    
 
-### Optimization Module
-- Solves localized **MILP/CP** models to minimize weighted delay in clusters.  
+### Targeted Optimization
 
----
+*   Solves optimization models only for detected conflict clusters
+    
+*   Focuses computational resources on bottleneck sections
+    
+*   Applies line scoring algorithms for routing decisions
+    
 
-## Algorithm Steps
+Methodology
+-----------
 
-1. **Conflict Detection**  
-   Project train movements and identify conflicts.  
+### Conflict Detection
 
-2. **Heuristic Filtering**  
-   Resolve clear conflicts using priority rules.  
+*   Headway violation detection using spatial-temporal analysis
+    
+*   Platform capacity monitoring with real-time occupancy tracking
+    
+*   Line congestion assessment based on train density
+    
 
-3. **Cluster Identification**  
-   Group unresolved conflicts into clusters.  
+### Optimization Approach
 
-4. **Mini-Optimization**  
-   Solve a small optimization model per cluster.  
+*   Priority-based routing (higher priority trains get preferential line access)
+    
+*   Dynamic speed adjustment based on schedule adherence
+    
+*   Platform reassignment with priority-driven eviction
+    
+*   Controlled disruption simulation for robustness testing
+    
 
-5. **Execution & Roll**  
-   Implement the plan and repeat for the next horizon.  
+### Resource Management
 
----
+*   Maintains minimum 50% active train ratio
+    
+*   Implements conservative disruption modeling (max 5% of trains)
+    
+*   Uses spacing adjustments (600m increments) for conflict resolution
+    
 
-## Mathematical Formulation
+Components
+----------
 
-**Objective**: Minimize total weighted delay  
+### realistic\_simulation\_generator.py
 
-\[
-\text{Minimize } Z = \sum_{t \in T} w_t \cdot D^{\text{total}}_t
-\]
+Generates baseline operational data with realistic delay patterns and congestion scenarios.
 
-### Variables
-- **Precedence binaries**: \( x_{i,j} \)  
-- **Total delay**: \( D^{\text{total}}_t \)  
+### main.py
 
-### Constraints
-- Precedence  
-- Headway  
-- Resource occupation  
-- Delay calculation  
+Core optimization engine implementing:
 
----
+*   Conflict detection and resolution
+    
+*   Dynamic routing and platform allocation
+    
+*   Speed optimization and schedule adjustment
+    
+*   Performance monitoring and reporting
+    
 
-## Applications
+Technical Specifications
+------------------------
 
-- Real-time **railway dispatching and signaling**  
-- **Delay management** and recovery  
-- **Network resilience** during disruptions  
-- Also applicable to:
-  - **Air traffic control**  
-  - **Manufacturing scheduling**  
-  - **Logistics planning**  
+### Data Models
 
----
+*   Station: position, platform capacity, current occupancy
+    
+*   Train: type, position, speed, line, schedule, priority (1-5)
+    
+*   TrainConfig: type-specific parameters (base speed, dwell time, disruption probability)
+    
 
-## Advantages
+### System Parameters
 
-- High computational efficiency  
-- Scalable to large networks  
-- Maintains solution quality  
-- Explainable decisions  
+*   Headway minimum: 500 meters
+    
+*   Track length: 92,000 meters
+    
+*   Station positions: Mumbai Central (0m) to Hoshangabad (92,000m)
+    
+*   Platform capacities: 2-6 platforms per station
+    
 
----
+Installation
+------------
 
-## Limitations
+### Requirements
 
-- May miss long-term optimal solutions  
-- Relies on heuristic quality  
-- Requires accurate cluster identification  
-- Higher implementation complexity  
+text
 
----
+Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`   Python >= 3.8  pandas >= 2.0.0  numpy >= 1.24.0   `
+
+### Setup
+
+bash
+
+Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`   pip install pandas numpy   `
+
+Usage
+-----
+
+### Generate Baseline
+
+bash
+
+Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`   python csv_generator.py   `
+
+### Run Optimization
+
+bash
+
+Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`   python main.py   `
+
+### Transform Output
+
+bash
+
+Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`   python data_transformer.py   `
+
+Input/Output
+------------
+
+### Input
+
+*   Timestamped train movement records
+    
+*   Position and speed data
+    
+*   Event states and delay information
+    
+
+### Output
+
+*   Optimized schedule with reduced conflicts
+    
+*   Performance metrics (throughput, delays, utilization)
+    
+*   Dashboard-ready formatted data
+    
+
+Limitations
+-----------
+
+### Scope Constraints
+
+*   Single-section optimization (Mumbai Central to Hoshangabad)
+    
+*   Fixed infrastructure assumptions
+    
+*   Simplified train dynamics model
+    
+
+### Operational Constraints
+
+*   Assumes perfect information availability
+    
+*   Limited disruption modeling
+    
+*   No crew or maintenance scheduling
+    
+
+### Technical Constraints
+
+*   Computational complexity limits real-time application
+    
+*   Memory requirements scale with train count
+    
+*   Fixed time step resolution
+    
+
+Future Enhancements
+-------------------
+
+*   Machine learning for delay prediction
+    
+*   Real-time data integration
+    
+*   Network-wide optimization
+    
+*   Enhanced disruption modeling
+    
+*   Integration with signaling systems
