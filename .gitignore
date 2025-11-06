@@ -8,12 +8,11 @@
 __pycache__/
 *.pyc
 
-# Ignore output files
-optimized_schedule.csv
-train_simulation_output_after.csv
-train_simulation_output_before.csv
-train_simulation_output.csv
-comparison_report.csv
-audit_trail_new.log
-audit_trail.log
+# Ignore all CSV output files
+*.csv
+
+# Ignore all log files
+*.log
+
+# Ignore outputs directory
 outputs/
