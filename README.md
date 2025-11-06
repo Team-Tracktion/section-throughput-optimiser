@@ -139,11 +139,11 @@ bash
 
 `   python main.py   `
 
-### Transform Output
+### Streamlit Dashboard
 
 bash
 
-`   python data_transformer.py   `
+`   streamlit run streamlit_dashboard.py   `
 
 Input/Output
 ------------
