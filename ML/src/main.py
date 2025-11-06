@@ -139,7 +139,7 @@ class RailwayOptimizer:
             "Andheri": Station("Andheri", 35000, platforms=4),
             "Borivali": Station("Borivali", 50000, platforms=3),
             "Vasai": Station("Vasai", 70000, platforms=2),
-            "Hoshangabad": Station("Hoshangabad", 92000, platforms=3)  # Your specific requirement
+            "Thane": Station("Thane", 92000, platforms=3)  # Your specific requirement
         }
         return stations
     
@@ -599,24 +599,126 @@ class RailwayOptimizer:
         return df
     
     def generate_optimization_report(self) -> Dict:
-        """Generate comprehensive optimization report"""
+        """Generate comprehensive optimization report with enhanced analytics"""
         total_trains = len(self.trains)
         
-        # Calculate metrics
+        # Calculate basic metrics
         delayed_trains = sum(1 for t in self.trains.values() if t.delay_minutes > 5)
         halted_trains = sum(1 for t in self.trains.values() if t.event == EventType.HALTED)
         rerouted_trains = sum(1 for t in self.trains.values() if len(t.route_history) > 1)
+        on_time_trains = sum(1 for t in self.trains.values() if t.delay_minutes <= 5)
         
         avg_delay = np.mean([t.delay_minutes for t in self.trains.values()])
         avg_speed = np.mean([t.current_speed for t in self.trains.values() if t.current_speed > 0])
+        max_delay = np.max([t.delay_minutes for t in self.trains.values()])
+        min_delay = np.min([t.delay_minutes for t in self.trains.values()])
+        
+        # Train type performance breakdown
+        train_type_stats = defaultdict(lambda: {
+            'count': 0, 'total_delay': 0, 'avg_speed': [], 'delayed_count': 0,
+            'avg_delay': 0, 'on_time_count': 0
+        })
+        
+        for train in self.trains.values():
+            train_type = train.train_type.value
+            train_type_stats[train_type]['count'] += 1 # type: ignore
+            train_type_stats[train_type]['total_delay'] += train.delay_minutes
+            if train.current_speed > 0:
+                train_type_stats[train_type]['avg_speed'].append(train.current_speed) # type: ignore
+            if train.delay_minutes > 5:
+                train_type_stats[train_type]['delayed_count'] += 1 # type: ignore
+            if train.delay_minutes <= 5:
+                train_type_stats[train_type]['on_time_count'] += 1 # type: ignore
+        
+        train_type_performance = {}
+        for train_type, stats in train_type_stats.items():
+            train_type_performance[train_type] = {
+                'count': stats['count'],
+                'avg_delay': stats['total_delay'] / stats['count'] if stats['count'] > 0 else 0, # type: ignore
+                'avg_speed': np.mean(stats['avg_speed']) if stats['avg_speed'] else 0,
+                'delayed_percentage': (stats['delayed_count'] / stats['count']) * 100 if stats['count'] > 0 else 0, # type: ignore
+                'on_time_percentage': (stats['on_time_count'] / stats['count']) * 100 if stats['count'] > 0 else 0, # type: ignore
+            }
+        
+        # Station performance analytics
+        station_stats = {}
+        for station_name, station in self.stations.items():
+            trains_at_station = [t for t in self.trains.values() if t.station == station_name]
+            if trains_at_station:
+                station_delays = [t.delay_minutes for t in trains_at_station]
+                station_stats[station_name] = {
+                    'platforms': station.platforms,
+                    'current_occupancy': station.current_occupancy,
+                    'utilization': (station.current_occupancy / station.platforms) * 100 if station.platforms > 0 else 0,
+                    'trains_count': len(trains_at_station),
+                    'avg_delay': np.mean(station_delays),
+                    'max_delay': np.max(station_delays),
+                    'min_delay': np.min(station_delays),
+                }
+            else:
+                station_stats[station_name] = {
+                    'platforms': station.platforms,
+                    'current_occupancy': station.current_occupancy,
+                    'utilization': 0,
+                    'trains_count': 0,
+                    'avg_delay': 0,
+                    'max_delay': 0,
+                    'min_delay': 0,
+                }
+        
+        # Line efficiency analysis
+        line_stats = defaultdict(lambda: {
+            'train_count': 0, 'total_delay': 0, 'avg_speed': [], 'on_time_count': 0
+        })
+        
+        for train in self.trains.values():
+            line = train.current_line.value
+            line_stats[line]['train_count'] += 1 # type: ignore
+            line_stats[line]['total_delay'] += train.delay_minutes
+            if train.current_speed > 0:
+                line_stats[line]['avg_speed'].append(train.current_speed) # type: ignore
+            if train.delay_minutes <= 5:
+                line_stats[line]['on_time_count'] += 1 # type: ignore
+        
+        line_efficiency = {}
+        for line, stats in line_stats.items():
+            line_efficiency[line] = {
+                'train_count': stats['train_count'],
+                'avg_delay': stats['total_delay'] / stats['train_count'] if stats['train_count'] > 0 else 0, # type: ignore
+                'avg_speed': np.mean(stats['avg_speed']) if stats['avg_speed'] else 0,
+                'on_time_rate': (stats['on_time_count'] / stats['train_count']) * 100 if stats['train_count'] > 0 else 0, # type: ignore
+            }
+        
+        # Event distribution
+        event_distribution = defaultdict(int)
+        for train in self.trains.values():
+            event_distribution[train.event.value] += 1
+        
+        # Speed analysis
+        speeds = [t.current_speed for t in self.trains.values() if t.current_speed > 0]
+        speed_stats = {
+            'avg': np.mean(speeds) if speeds else 0,
+            'max': np.max(speeds) if speeds else 0,
+            'min': np.min(speeds) if speeds else 0,
+            'median': np.median(speeds) if speeds else 0,
+        }
+        
+        # Conflict details
+        conflict_types = defaultdict(int)
+        for conflict in self.conflicts:
+            conflict_types[conflict.get('type', 'unknown')] += 1
+        
+        # Calculate efficiency score
+        efficiency_score = 100 - (avg_delay * 2) - ((total_trains - on_time_trains) / total_trains * 30) if total_trains > 0 else 0
+        efficiency_score = max(0, min(100, efficiency_score))
         
         # Platform utilization
         platform_utilization = {}
         for station_name, station in self.stations.items():
-            utilization = (station.current_occupancy / station.platforms) * 100
+            utilization = (station.current_occupancy / station.platforms) * 100 if station.platforms > 0 else 0
             platform_utilization[station_name] = utilization
         
-        # Line utilization
+        # Line usage
         line_usage = defaultdict(int)
         for train in self.trains.values():
             line_usage[train.current_line.value] += 1
@@ -624,16 +726,27 @@ class RailwayOptimizer:
         report = {
             'total_trains': total_trains,
             'delayed_trains': delayed_trains,
-            'delayed_percentage': (delayed_trains / total_trains) * 100,
+            'delayed_percentage': (delayed_trains / total_trains) * 100 if total_trains > 0 else 0,
             'halted_trains': halted_trains,
-            'halted_percentage': (halted_trains / total_trains) * 100,
+            'halted_percentage': (halted_trains / total_trains) * 100 if total_trains > 0 else 0,
             'rerouted_trains': rerouted_trains,
-            'rerouted_percentage': (rerouted_trains / total_trains) * 100,
+            'rerouted_percentage': (rerouted_trains / total_trains) * 100 if total_trains > 0 else 0,
+            'on_time_trains': on_time_trains,
+            'on_time_percentage': (on_time_trains / total_trains) * 100 if total_trains > 0 else 0,
             'average_delay_minutes': avg_delay,
+            'max_delay_minutes': max_delay,
+            'min_delay_minutes': min_delay,
             'average_speed_kmph': avg_speed,
             'conflicts_detected': len(self.conflicts),
+            'conflict_types': dict(conflict_types),
             'platform_utilization': platform_utilization,
-            'line_usage': dict(line_usage)
+            'line_usage': dict(line_usage),
+            'train_type_performance': train_type_performance,
+            'station_stats': station_stats,
+            'line_efficiency': line_efficiency,
+            'event_distribution': dict(event_distribution),
+            'speed_stats': speed_stats,
+            'efficiency_score': efficiency_score,
         }
         
         return report
